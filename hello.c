@@ -1,57 +1,51 @@
-
-/*
-A simple "hello world" example.
-Set the screen background color and palette colors.
-Then write a message to the nametable.
-Finally, turn on the PPU to display video.
-*/
-
 #include "neslib.h"
 #include "vrambuf.h"
 #include "bcd.h"
+// link the pattern table into CHR ROM
+//#link "chr_generic.s"
+//#link "vrambuf.c"
 
-
-// discuss why making this const and a global is a good thing
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] =
 {
   0x03, // screen color
   
-  0x24, 0x16, 0x20, 0x0, // background palette 0
-  0x1c, 0x20, 0x2c, 0x0, // background palette 1
-  0x00, 0x1a, 0x20, 0x0, // background palette 2
-  0x00, 0x1a, 0x20, 0x0, // background palette 3
+  0x0F, 0x30, 0x28, 0x00, // background palette 0
+  0x16, 0x20, 0x2C, 0x00, // background palette 1
+  0x00, 0x1A, 0x20, 0x00, // background palette 2
+  0x00, 0x1A, 0x20, 0x00, // background palette 3
   
-  0x23, 0x31, 0x41, 0x0, // sprite palette 0
-  0x00, 0x37, 0x25, 0x0, // sprite palette 1
-  0x36, 0x21, 0x19, 0x0, // sprite palette 2
-  0x1d, 0x37, 0x2b, // sprite palette 3
+  0x07, 0x27, 0x1C, 0x00, // sprite palette 0
+  0x00, 0x37, 0x25, 0x00, // sprite palette 1
+  0x36, 0x21, 0x19, 0x00, // sprite palette 2
+  0x1D, 0x37, 0x2B, // sprite palette 3
 };
 
 ///// METASPRITES
-
 #define TILE 0xd8
-#define ATTR 0x00
 // define a 2x2 metasprite
 unsigned char metasprite[]={
-        0,      0,      TILE+0,   ATTR, 
-        0,      8,      TILE+1,   ATTR, 
-        8,      0,      TILE+2,   ATTR, 
-        8,      8,      TILE+3,   ATTR, 
+        0,      0,      TILE+0,   0x00, 
+        0,      8,      TILE+1,   0x00, 
+        8,      0,      TILE+2,   0x00, 
+        8,      8,      TILE+3,   0x00, 
         128};
 
-#define TILEDOOR 0xd8
+unsigned char flippedmetasprite[]={
+        0,      0,      TILE+2,   0x40, 
+        0,      8,      TILE+3,   0x40, 
+        8,      0,      TILE+0,   0x40, 
+        8,      8,      TILE+1,   0x40, 
+        128};
+
 #define ATTRDOOR 0x00
-unsigned char doorsprite[]={
-        0,      0,      TILE+0,   ATTR, 
-        0,      8,      TILE+1,   ATTR, 
-        8,      0,      TILE+2,   ATTR, 
-        8,      8,      TILE+3,   ATTR, 
+const unsigned char doorsprite[]={
+        0,      0,      0xc4,   ATTRDOOR, 
+        0,      8,      0xc5,   ATTRDOOR, 
+        8,      0,      0xc6,   ATTRDOOR, 
+        8,      8,      0xc7,   ATTRDOOR, 
         128};
 
-// link the pattern table into CHR ROM
-//#link "chr_generic.s"
-//#link "vrambuf.c"
 
 // main function, run after console reset
 void main(void) 
@@ -65,10 +59,8 @@ void main(void)
   // sprite atribute
   char atri = 0x00;
   
+  // for a for loop
   int i;
- 
-  
-  pal_all(PALETTE); // generally before game loop (in main)
 
   // write text to name table
   vram_adr(NTADR_A(2,2));		// set address
@@ -82,21 +74,22 @@ void main(void)
   vram_adr(NTADR_A(2,4));		// set address
   vram_write("first NES 'Game'!", 17);	// write bytes to video RAM
   
-   // write door table
-  vram_adr(NTADR_A(1,20));		// set address
-  vram_put(0xd8 + 0x01);
-
   
-   // write background table
+  // write background table
   vram_adr(NTADR_A(1,21));		// set address
   for(i = 0; i < 30; i++)
   {
-    vram_put(0x0c);
+    vram_put(0xc1);
   }
   
   // enable PPU rendering (turn on screen)
   ppu_on_all();
+  pal_all(PALETTE); // generally before game loop (in main)
+  
+  vrambuf_clear();
+  set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
 
+  
   // infinite loop
   while (1)
   {
@@ -107,7 +100,7 @@ void main(void)
     if(sprite_dir)
     {
       sprite_x += 1;
-      if(sprite_x > 225)
+      if(sprite_x > 235)
       {
         sprite_dir = false;
         
@@ -122,10 +115,19 @@ void main(void)
       }
     }
     
-    ppu_wait_frame();
     // Do this when "drawing" of character sprite
-    oam_id = oam_meta_spr(sprite_x, 150, oam_id, metasprite);
+    if(sprite_dir)
+    	oam_id = oam_meta_spr(sprite_x, 150, oam_id, metasprite);
+    else
+      oam_id = oam_meta_spr(sprite_x, 150, oam_id, flippedmetasprite);
+    oam_id = oam_meta_spr(232, 150, oam_id, doorsprite);
     
+    //on the door test
+    if(sprite_x >= 225)
+    	vrambuf_put(NTADR_A(2, 5), "On the door!", 12);
+    else
+        vrambuf_put(NTADR_A(2, 5), "           ", 12);
+    vrambuf_flush();
     // Do this to "hide" any remaining sprites
     oam_hide_rest(oam_id);
   }
