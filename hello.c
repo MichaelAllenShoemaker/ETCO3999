@@ -4,7 +4,7 @@
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
-#define NES_MIRRORING 0 ("vertical", 0 = "horizontal")
+#define NES_MIRRORING 1 ("vertical", 0 = "horizontal")
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] =
@@ -98,10 +98,10 @@ void main(void)
   // sprite atribute
   char atri = 0x00;
   
-  vram_adr(NTADR_A(1, 3)); // Zelda probably started at 0x28d0 (8 rows below stats area)
+  vram_adr(NTADR_A(1, 4)); // Zelda probably started at 0x28d0 (8 rows below stats area)
   vram_unrle(leftMap); // my map01 is an array of 274 unsigned char's
   
-  vram_adr(NTADR_B(1,3)); // Zelda probably started at 0x28d0 (8 rows below stats area)
+  vram_adr(NTADR_B(0,4)); // Zelda probably started at 0x28d0 (8 rows below stats area)
   vram_unrle(rightMap); // my map01 is an array of 274 unsigned char's
   
   // enable PPU rendering (turn on screen)
@@ -133,11 +133,12 @@ void main(void)
       }
       else
       {
-        if(player_x+1 < 255)
+        if(player_x+1 < 230)
           player_x += 1;
       }
       playerDirection = 0;
     }
+    
     else if((pad_result >> 6) & 0x01)
     {
       //moving to the left
@@ -147,7 +148,7 @@ void main(void)
       }
       else
       {
-        if(player_x-1 > 0)
+        if(player_x-1 > 12)
           player_x -= 1;
       }
       playerDirection = 2;
@@ -155,13 +156,15 @@ void main(void)
     else if((pad_result >> 4) & 0x01)
     {
       //moving up
-      player_y -= 1;
+      if(player_y-1 > 42)
+      	player_y -= 1;
       playerDirection = 1;
     }
     else if((pad_result >> 5) & 0x01)
     {
       //moving down
-      player_y += 1;
+      if(player_y+1 < 192)
+      	player_y += 1;
       playerDirection = 3;
     }
     
