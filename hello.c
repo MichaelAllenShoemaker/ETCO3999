@@ -13,6 +13,12 @@ void put_str(unsigned int adr, const char *str) {
   vram_write(str, strlen(str)); // write bytes to PPU
 }
 
+typedef struct {
+  byte xpos;
+  byte ypos;
+  signed char dx;
+  signed char dy;
+} bullet;
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] =
@@ -240,6 +246,21 @@ void move_player(char pad_result)
     }
 }
 
+void fade_in() {
+  byte vb;
+  for (vb=0; vb<=4; vb++) {
+    // set virtual bright value
+    pal_bright(vb);
+    // wait for 4/60 sec
+    ppu_wait_frame();
+    ppu_wait_frame();
+    ppu_wait_frame();
+    ppu_wait_frame();
+    ppu_wait_frame();
+    ppu_wait_frame();
+  }
+}
+
 // main function, run after console reset
 void main(void) 
 {
@@ -267,11 +288,13 @@ void main(void)
   vrambuf_clear();
   set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
 
-  
       
   // set sprite 0
   oam_clear();
   oam_spr(1, 38, 0xa4, 0, 0);
+  split(cam_x, 0);
+  
+  fade_in();
   
   // game loop
   while (1)
