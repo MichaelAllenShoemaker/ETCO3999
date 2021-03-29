@@ -13,38 +13,95 @@ void put_str(unsigned int adr, const char *str) {
   vram_write(str, strlen(str)); // write bytes to PPU
 }
 
+
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] =
 {
   0x0F, // screen color
   
-  0x0F, 0x30, 0x28, 0x00, // background palette 0
-  0x16, 0x20, 0x2C, 0x00, // background palette 1
+  0x05, 0x17, 0x27, 0x00, // background palette 0
+  0x16, 0x20, 0x0F, 0x00, // background palette 1
   0x00, 0x1A, 0x20, 0x00, // background palette 2
   0x00, 0x1A, 0x20, 0x00, // background palette 3
   
-  0x07, 0x27, 0x1C, 0x00, // sprite palette 0
+  0x0F, 0x20, 0x33, 0x00, // sprite palette 0
   0x00, 0x37, 0x25, 0x00, // sprite palette 1
   0x36, 0x21, 0x19, 0x00, // sprite palette 2
   0x1D, 0x37, 0x2B, // sprite palette 3
 };
 
 ///// METASPRITES
-#define TILE 0xd8
 // define a 2x2 metasprite
-unsigned char rightPlayer[]={
-        0,      0,      TILE+0,   0x00, 
-        0,      8,      TILE+1,   0x00, 
-        8,      0,      TILE+2,   0x00, 
-        8,      8,      TILE+3,   0x00, 
-        128};
+unsigned char PlayerSprite[][17]={
+  	{
+        0,      0,      0xd8+0,   0x00, 
+        0,      8,      0xd8+1,   0x00, 
+        8,      0,      0xd8+2,   0x00, 
+        8,      8,      0xd8+3,   0x00, 
+        128},
+	{
+        0,      0,      0xdc+0,   0x00, 
+        0,      8,      0xdc+1,   0x00, 
+        8,      0,      0xdc+2,   0x00, 
+        8,      8,      0xdc+3,   0x00, 
+        128},
+	{
+        0,      0,      0xe0+0,   0x00, 
+        0,      8,      0xe0+1,   0x00, 
+        8,      0,      0xe0+2,   0x00, 
+        8,      8,      0xe0+3,   0x00, 
+        128},
+	{
+        0,      0,      0xe4+0,   0x00, 
+        0,      8,      0xe4+1,   0x00, 
+        8,      0,      0xe4+2,   0x00, 
+        8,      8,      0xe4+3,   0x00, 
+        128},
+	{
+        0,      0,      0xe8+0,   0x00, 
+        0,      8,      0xe8+1,   0x00, 
+        8,      0,      0xe8+2,   0x00, 
+        8,      8,      0xe8+3,   0x00, 
+        128},
+	{
+        0,      0,      0xd8+2,   0x40, 
+        0,      8,      0xd8+3,   0x40, 
+        8,      0,      0xd8+0,   0x40, 
+        8,      8,      0xd8+1,   0x40, 
+        128},
+	{
+        0,      0,      0xdc+2,   0x40, 
+        0,      8,      0xdc+3,   0x40, 
+        8,      0,      0xdc+0,   0x40, 
+        8,      8,      0xdc+1,   0x40, 
+        128},
+	{
+        0,      0,      0xe0+2,   0x40, 
+        0,      8,      0xe0+3,   0x40, 
+        8,      0,      0xe0+0,   0x40, 
+        8,      8,      0xe0+1,   0x40, 
+        128},
+	{
+        0,      0,      0xe4+2,   0x40, 
+        0,      8,      0xe4+3,   0x40, 
+        8,      0,      0xe4+0,   0x40, 
+        8,      8,      0xe4+1,   0x40, 
+        128},
+	{
+        0,      0,      0xe8+2,   0x40, 
+        0,      8,      0xe8+3,   0x40, 
+        8,      0,      0xe8+0,   0x40, 
+        8,      8,      0xe8+1,   0x40, 
+        128}
+};
 
-unsigned char leftPlayer[]={
-        0,      0,      TILE+2,   0x40, 
-        0,      8,      TILE+3,   0x40, 
-        8,      0,      TILE+0,   0x40, 
-        8,      8,      TILE+1,   0x40, 
-        128};
+const unsigned char TitleBar[61]={
+0x02,0xa0,0xa7,0xaa,0x02,0x0d,0xa0,0x02,0x0d,0xa8,0xa0,0xa2,0xa2,0x00,0x02,0x0d,
+0xb2,0x01,0x01,0x00,0x00,0x01,0x00,0x00,0x01,0x02,0x05,0xa3,0xa3,0xa2,0xa2,0x00,
+0x02,0x0d,0xb3,0x01,0x01,0x00,0x00,0x01,0x00,0x00,0x01,0x01,0xb4,0x02,0x03,0xa3,
+0xa3,0xa1,0xa5,0xa9,0x02,0x0d,0xa1,0x02,0x0d,0xa6,0xa1,0x02,0x00
+};
+
 
 const unsigned char leftMap[270]={
 0x02,0xc0,0x02,0x0e,0xc4,0xc6,0xc0,0x02,0x1d,0xc5,0xc7,0xc0,0x02,0x0f,0x8f,0x02,
@@ -87,66 +144,21 @@ const unsigned char rightMap[300]={
 0x01,0x8f,0x02,0x0c,0x01,0x8f,0x8f,0x01,0x8f,0x02,0x0c,0xc0,0x01,0x8f,0x02,0x0c,
 0x01,0x02,0x03,0x8f,0x02,0x0c,0xc0,0x02,0x3f,0xc0,0x02,0x00
 };
+
 unsigned char cam_x = 1;
+// character position
+unsigned char player_x = 128;
+unsigned char player_y = 55;
+//int for direction 0 = right, 1 = down, 2 = left, 3 = up
+int playerDirection = 0;
+int playerSprite = 0;
+int playerFramesToMove = 0;
+int framesBetweenChange = 10;
 
-
-// main function, run after console reset
-void main(void) 
+// Move Function
+void move_player(char pad_result)
 {
-  
-  
-  // character position
-  unsigned char player_x = 128;
-  unsigned char player_y = 55;
-  
-  //int for direction 0 = right, 1 = down, 2 = left, 3 = up
-  int playerDirection = 0;
-  
-  
-  // sprite atribute
-  char atri = 0x00;
-  
-  // Setting Up Status Bar
-  put_str(NTADR_A(7,1), "Nametable A, Line 1");
-  put_str(NTADR_A(7,2), "Nametable A, Line 2");
-  vram_adr(NTADR_A(0,3));
-  vram_fill(5, 32);
-  
-  //Filling in the maps
-  vram_adr(NTADR_A(1, 4)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  vram_unrle(leftMap); // my map01 is an array of 274 unsigned char's
-  
-  vram_adr(NTADR_B(0,4)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  vram_unrle(rightMap); // my map01 is an array of 274 unsigned char's
-  
-  // enable PPU rendering (turn on screen)
-  ppu_on_all();
-  pal_all(PALETTE); // generally before game loop (in main)
-  
-  vrambuf_clear();
-  set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
-
-  
-      
-  // set sprite 0
-  oam_clear();
-  oam_spr(1, 30, 0xa0, 0, 0);
-  
-  // game loop
-  while (1)
-  {
-    // do this at the start of each frame
-    int oam_id = 0;
-    
-    // getting player input
-    char pad_result = pad_poll(0); 
-    
-    split(cam_x, 0);
-    
-    // set sprite 0
-    oam_id = oam_spr(1, 30, 0xa0, 0, 0);
-    
-    //moving the player
+      //moving the player
     if((pad_result >> 7) & 0x01)
     {
       // moving to the right
@@ -160,6 +172,14 @@ void main(void)
           player_x += 1;
       }
       playerDirection = 0;
+      playerFramesToMove++;
+      if(playerFramesToMove == framesBetweenChange)
+      {
+        playerSprite++;
+        playerFramesToMove = 0;
+        if(playerSprite == 5)
+        	playerSprite = 0;
+      }
     }
     
     else if((pad_result >> 6) & 0x01)
@@ -175,6 +195,14 @@ void main(void)
           player_x -= 1;
       }
       playerDirection = 2;
+      playerFramesToMove++;
+      if(playerFramesToMove == framesBetweenChange)
+      {
+        playerSprite++;
+        playerFramesToMove = 0;
+        if(playerSprite == 5)
+        	playerSprite = 0;
+      }
     }
     else if((pad_result >> 4) & 0x01)
     {
@@ -182,20 +210,88 @@ void main(void)
       if(player_y-1 > 42)
       	player_y -= 1;
       playerDirection = 1;
+      playerFramesToMove++;
+      if(playerFramesToMove == framesBetweenChange)
+      {
+        playerSprite++;
+        playerFramesToMove = 0;
+        if(playerSprite == 5)
+        	playerSprite = 0;
+      }
     }
     else if((pad_result >> 5) & 0x01)
     {
       //moving down
-      if(player_y+1 < 192)
+      if(player_y+1 < 200)
       	player_y += 1;
       playerDirection = 3;
+      playerFramesToMove++;
+      if(playerFramesToMove == framesBetweenChange)
+      {
+        playerSprite++;
+        playerFramesToMove = 0;
+        if(playerSprite == 5)
+        	playerSprite = 0;
+      }
     }
-    
-    
-    if(playerDirection == 0)
-    	oam_id = oam_meta_spr(player_x, player_y, oam_id, rightPlayer);
     else
-      	oam_id = oam_meta_spr(player_x, player_y, oam_id, leftPlayer);
+    {
+      	playerSprite = 0;
+    }
+}
+
+// main function, run after console reset
+void main(void) 
+{
+  // sprite atribute
+  char atri = 0x00;
+  
+  // Setting Up Status Bar
+  vram_adr(NTADR_A(0, 1));
+  vram_unrle(TitleBar);
+  put_str(NTADR_A(26,2), "LIFE");
+  put_str(NTADR_A(17,2), "x9");
+  put_str(NTADR_A(17,3), "x9");
+  
+  //Filling in the maps
+  vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
+  vram_unrle(leftMap); // my map01 is an array of 274 unsigned char's
+  
+  vram_adr(NTADR_B(0,5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
+  vram_unrle(rightMap); // my map01 is an array of 274 unsigned char's
+  
+  // enable PPU rendering (turn on screen)
+  ppu_on_all();
+  pal_all(PALETTE); // generally before game loop (in main)
+  
+  vrambuf_clear();
+  set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
+
+  
+      
+  // set sprite 0
+  oam_clear();
+  oam_spr(1, 38, 0xa4, 0, 0);
+  
+  // game loop
+  while (1)
+  {
+    // do this at the start of each frame
+    int oam_id = 0;
+    
+    // getting player input
+    char pad_result = pad_poll(0); 
+    
+    split(cam_x, 0);
+    
+    // set sprite 0
+    oam_id = oam_spr(1, 38, 0xa4, 0, 0);
+    move_player(pad_result);
+    
+    if(playerDirection == 2)
+    	oam_id = oam_meta_spr(player_x, player_y, oam_id, PlayerSprite[playerSprite+5]);
+    else
+      oam_id = oam_meta_spr(player_x, player_y, oam_id, PlayerSprite[playerSprite]);
     
     
     // Do this to "hide" any remaining sprites
