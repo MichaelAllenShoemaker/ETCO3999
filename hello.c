@@ -1,10 +1,17 @@
 #include "neslib.h"
 #include "vrambuf.h"
 #include "bcd.h"
+#include <string.h>
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
 #define NES_MIRRORING 1 ("vertical", 0 = "horizontal")
+
+// Helper Functions
+void put_str(unsigned int adr, const char *str) {
+  vram_adr(adr);        // set PPU read/write address
+  vram_write(str, strlen(str)); // write bytes to PPU
+}
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] =
@@ -87,6 +94,7 @@ unsigned char cam_x = 1;
 void main(void) 
 {
   
+  
   // character position
   unsigned char player_x = 128;
   unsigned char player_y = 55;
@@ -98,6 +106,13 @@ void main(void)
   // sprite atribute
   char atri = 0x00;
   
+  // Setting Up Status Bar
+  put_str(NTADR_A(7,1), "Nametable A, Line 1");
+  put_str(NTADR_A(7,2), "Nametable A, Line 2");
+  vram_adr(NTADR_A(0,3));
+  vram_fill(5, 32);
+  
+  //Filling in the maps
   vram_adr(NTADR_A(1, 4)); // Zelda probably started at 0x28d0 (8 rows below stats area)
   vram_unrle(leftMap); // my map01 is an array of 274 unsigned char's
   
@@ -111,8 +126,11 @@ void main(void)
   vrambuf_clear();
   set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
 
-  //move the camera into place before the player starts
-  scroll(0, 0);
+  
+      
+  // set sprite 0
+  oam_clear();
+  oam_spr(1, 30, 0xa0, 0, 0);
   
   // game loop
   while (1)
@@ -123,13 +141,18 @@ void main(void)
     // getting player input
     char pad_result = pad_poll(0); 
     
+    split(cam_x, 0);
+    
+    // set sprite 0
+    oam_id = oam_spr(1, 30, 0xa0, 0, 0);
+    
     //moving the player
     if((pad_result >> 7) & 0x01)
     {
       // moving to the right
       if(cam_x + 1 < 256 && player_x > 128)
       {
-        scroll(cam_x++, 0);
+        cam_x++;
       }
       else
       {
@@ -144,7 +167,7 @@ void main(void)
       //moving to the left
       if(cam_x - 1 > 1 && player_x < 128)
       {
-        scroll(cam_x--, 0);
+        cam_x--;
       }
       else
       {
@@ -168,12 +191,13 @@ void main(void)
       playerDirection = 3;
     }
     
+    
     if(playerDirection == 0)
     	oam_id = oam_meta_spr(player_x, player_y, oam_id, rightPlayer);
     else
       	oam_id = oam_meta_spr(player_x, player_y, oam_id, leftPlayer);
     
-    vrambuf_flush();
+    
     // Do this to "hide" any remaining sprites
     oam_hide_rest(oam_id);
   }
