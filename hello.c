@@ -150,7 +150,12 @@ const unsigned char rightMap[300]={
 0x01,0x8f,0x02,0x0c,0x01,0x8f,0x8f,0x01,0x8f,0x02,0x0c,0xc0,0x01,0x8f,0x02,0x0c,
 0x01,0x02,0x03,0x8f,0x02,0x0c,0xc0,0x02,0x3f,0xc0,0x02,0x00
 };
-
+#define COLOR_MISSILE		3
+#define COLOR_BOMB		2
+#define NAME_MISSILE	100
+#define YOFFSCREEN 240	// offscreen y position (hidden)
+#define xOFFSCREEN 240	// offscreen x position (hidden)
+#define PLAYERBULLET 0 // index of the players bullet in the array
 unsigned char cam_x = 1;
 // character position
 unsigned char player_x = 128;
@@ -160,6 +165,8 @@ int playerDirection = 0;
 int playerSprite = 0;
 int playerFramesToMove = 0;
 int framesBetweenChange = 10;
+
+bullet Bullets[10];
 
 // Move Function
 void move_player(char pad_result)
@@ -244,6 +251,49 @@ void move_player(char pad_result)
     {
       	playerSprite = 0;
     }
+    if(pad_result & 0x01 && Bullets[PLAYERBULLET].ypos == YOFFSCREEN)
+    {
+      Bullets[PLAYERBULLET].ypos = player_y-8; // must be multiple of missile speed
+      Bullets[PLAYERBULLET].xpos = player_x+4; // player X position
+      //int for direction 0 = right, 1 = down, 2 = left, 3 = up
+      if(playerDirection == 0)
+      {
+      	Bullets[PLAYERBULLET].dy = 0; // player missile speed
+     	Bullets[PLAYERBULLET].dx = 4; // player missile speed
+      }
+      else if(playerDirection == 1)
+      {
+      	Bullets[PLAYERBULLET].dy = -4; // player missile speed
+     	Bullets[PLAYERBULLET].dx = 0; // player missile speed
+      }
+      else if(playerDirection == 2)
+      {
+      	Bullets[PLAYERBULLET].dy = 0; // player missile speed
+     	Bullets[PLAYERBULLET].dx = -4; // player missile speed
+      }
+      else
+      {
+        Bullets[PLAYERBULLET].dy = 4; // player missile speed
+     	Bullets[PLAYERBULLET].dx = 0; // player missile speed
+      }
+    }
+  
+}
+
+void move_bullets() {
+  byte i;
+  for (i=0; i<10; i++) { 
+    if (Bullets[i].ypos != YOFFSCREEN && Bullets[i].xpos != xOFFSCREEN) {
+      // hit the bottom or top?
+      if ((byte)(Bullets[i].ypos += Bullets[i].dy) < 35) {
+        Bullets[i].ypos = YOFFSCREEN;
+      }
+      if ((byte)(Bullets[i].xpos += Bullets[i].dx) < 10 || Bullets[i].xpos > 235) {
+        Bullets[i].xpos = xOFFSCREEN;
+        Bullets[i].ypos = YOFFSCREEN;
+      }
+    }
+  }
 }
 
 void fade_in() {
@@ -261,12 +311,9 @@ void fade_in() {
   }
 }
 
-// main function, run after console reset
-void main(void) 
+void setup()
 {
-  // sprite atribute
-  char atri = 0x00;
-  
+  byte i = 0;
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 1));
   vram_unrle(TitleBar);
@@ -293,7 +340,17 @@ void main(void)
   oam_clear();
   oam_spr(1, 38, 0xa4, 0, 0);
   split(cam_x, 0);
-  
+  for (i=0; i<10; i++) {
+    Bullets[i].ypos = YOFFSCREEN;
+  }
+}
+
+
+
+// main function, run after console reset
+void main(void) 
+{
+  setup();
   fade_in();
   
   // game loop
@@ -301,7 +358,7 @@ void main(void)
   {
     // do this at the start of each frame
     int oam_id = 0;
-    
+    byte i = 0;
     // getting player input
     char pad_result = pad_poll(0); 
     
@@ -315,7 +372,15 @@ void main(void)
     	oam_id = oam_meta_spr(player_x, player_y, oam_id, PlayerSprite[playerSprite+5]);
     else
       oam_id = oam_meta_spr(player_x, player_y, oam_id, PlayerSprite[playerSprite]);
-    
+     move_bullets();
+    for (i=0; i<10; i++) {
+    	bullet* mis = &Bullets[i];
+    	if (mis->ypos != YOFFSCREEN) {
+      		oam_id = oam_spr(mis->xpos, mis->ypos, 0x16,
+                      0x02,
+                      oam_id);
+    }
+  }
     
     // Do this to "hide" any remaining sprites
     oam_hide_rest(oam_id);
