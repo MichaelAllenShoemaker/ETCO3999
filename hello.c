@@ -4,13 +4,11 @@
 #include "vrambuf.h"
 #include "bcd.h"
 #include <string.h>
+
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
 #define NES_MIRRORING 1 ("vertical", 0 = "horizontal")
-
-#include "helpers.h"
-#include "Maps.h"
 
 typedef struct {
   byte xpos;
@@ -18,6 +16,12 @@ typedef struct {
   signed char dx;
   signed char dy;
 } bullet;
+
+typedef struct {
+  byte xpos;
+  byte ypos;
+  bool current;
+} mapPiece;
 
 #define COLOR_MISSILE		3
 #define COLOR_BOMB		2
@@ -34,9 +38,17 @@ int playerSprite = 0;
 int playerFramesToMove = 0;
 int framesBetweenChange = 10;
 
+bool canGoRight = true;
+bool canGoUp = false;
+bool canGoLeft = false;
+bool canGoDown = false;
+bool canMove = true;
+
 bullet Bullets[10];
+mapPiece Map[9];
 
-
+#include "Maps.h"
+#include "helpers.h"
 // Move Function
 void move_player(char pad_result)
 {
@@ -55,6 +67,11 @@ void move_player(char pad_result)
         if(playerSprite == 3)
         	playerSprite = 0;
       }
+      
+      if(canGoRight && player_x > 218)
+      {
+        change_Map(0);
+      }
     }
     
     else if((pad_result >> 6) & 0x01)
@@ -69,6 +86,11 @@ void move_player(char pad_result)
         playerFramesToMove = 0;
         if(playerSprite == 3)
         	playerSprite = 0;
+      }
+      
+      if(canGoLeft && player_x < 22)
+      {
+        change_Map(2);
       }
     }
     else if((pad_result >> 4) & 0x01)
@@ -85,6 +107,11 @@ void move_player(char pad_result)
         if(playerSprite == 3)
         	playerSprite = 0;
       }
+      
+      if(canGoUp && player_y < 44)
+      {
+        change_Map(1);
+      }
     }
     else if((pad_result >> 5) & 0x01)
     {
@@ -99,6 +126,11 @@ void move_player(char pad_result)
         playerFramesToMove = 0;
         if(playerSprite == 3)
         	playerSprite = 0;
+      }
+      
+      if(canGoDown && player_y > 188)
+      {
+        change_Map(3);
       }
     }
     else
@@ -150,21 +182,6 @@ void move_bullets() {
   }
 }
 
-void fade_in() {
-  byte vb;
-  for (vb=0; vb<=4; vb++) {
-    // set virtual bright value
-    pal_bright(vb);
-    // wait for 4/60 sec
-    ppu_wait_frame();
-    ppu_wait_frame();
-    ppu_wait_frame();
-    ppu_wait_frame();
-    ppu_wait_frame();
-    ppu_wait_frame();
-  }
-}
-
 
 #include "setup.h"
 // main function, run after console reset
@@ -181,10 +198,12 @@ void main(void)
     byte i = 0;
     // getting player input
     char pad_result = pad_poll(0); 
-    ppu_wait_frame();
     // set sprite 0
     oam_id = oam_spr(1, 38, 0xa4, 0, 0);
-    move_player(pad_result);
+    
+    
+    if(canMove)
+    	move_player(pad_result);
     
     if(playerDirection == 2)
     	oam_id = oam_meta_spr(player_x, player_y, oam_id, PlayerSprite[playerSprite+4]);
@@ -197,10 +216,20 @@ void main(void)
       		oam_id = oam_spr(mis->xpos, mis->ypos, 0x16,
                       0x02,
                       oam_id);
+        }
     }
+    for (i=0; i<9; i++) {
+    	mapPiece* map = &Map[i];
+        if (map->ypos != YOFFSCREEN) {
+          if(map->current)
+          	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x02, oam_id);
+          else
+            	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x01, oam_id);
+    	}
   }
     
     // Do this to "hide" any remaining sprites
+    vrambuf_flush();
     oam_hide_rest(oam_id);
   }
 }

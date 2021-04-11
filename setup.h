@@ -26,6 +26,9 @@ void setup()
   //Filling in the maps
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
   vram_unrle(Map11); // my map01 is an array of 274 unsigned char's
+  Map[0].xpos = 50;
+  Map[0].ypos = 28;
+  Map[0].current = true;
  
   
   // enable PPU rendering (turn on screen)
