@@ -13,7 +13,7 @@ void put_str(unsigned int adr, const char *str) {
 
 void fade_out() {
   byte vb;
-  for (vb=4; vb<=0; vb++) {
+  for (vb=4; vb>0; vb--) {
     // set virtual bright value
     pal_bright(vb);
     // wait for 4/60 sec
@@ -203,7 +203,5 @@ void change_Map(int dir)
         canGoDown = false;
   }
   ppu_on_all();
-  fade_out();
-  fade_in();
   canMove = true;
 }

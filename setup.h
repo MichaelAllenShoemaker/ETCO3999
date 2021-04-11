@@ -17,6 +17,7 @@ const char PALETTE[32] =
 void setup()
 {
   byte i = 0;
+  ppu_off();
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 1));
   vram_unrle(TitleBar);
@@ -47,4 +48,25 @@ void setup()
   }
 }
 
+void title()
+{
+  // Setting Up Status Bar
+  vram_adr(NTADR_A(0, 0));
+  vram_unrle(TitleScreen);
+  put_str(NTADR_A(4,4), "the legend of");
+  put_str(NTADR_A(5,18), "a game by:");
+  put_str(NTADR_A(7,20), "michael shoemaker");
+  
+  
+  // enable PPU rendering (turn on screen)
+  ppu_on_all();
+  pal_all(PALETTE); // generally before game loop (in main)
+  
+  vrambuf_clear();
+  set_vram_update(updbuf); // updbuf = 0x100 -- start of stack RAM
+
+      
+  // set sprite 0
+  oam_clear();
+}
 

@@ -30,14 +30,15 @@ typedef struct {
 #define xOFFSCREEN 240	// offscreen x position (hidden)
 #define PLAYERBULLET 0 // index of the players bullet in the array
 // character position
-unsigned char player_x = 128;
-unsigned char player_y = 55;
+unsigned char player_x = 120;
+unsigned char player_y = 120;
 //int for direction 0 = right, 1 = down, 2 = left, 3 = up
 int playerDirection = 0;
 int playerSprite = 0;
 int playerFramesToMove = 0;
 int framesBetweenChange = 10;
 
+bool titleScreen = true;
 bool canGoRight = true;
 bool canGoUp = false;
 bool canGoLeft = false;
@@ -70,7 +71,9 @@ void move_player(char pad_result)
       
       if(canGoRight && player_x > 218)
       {
+        fade_out();
         change_Map(0);
+        fade_in();
       }
     }
     
@@ -90,7 +93,9 @@ void move_player(char pad_result)
       
       if(canGoLeft && player_x < 22)
       {
+        fade_out();
         change_Map(2);
+        fade_in();;
       }
     }
     else if((pad_result >> 4) & 0x01)
@@ -110,7 +115,9 @@ void move_player(char pad_result)
       
       if(canGoUp && player_y < 44)
       {
+        fade_out();
         change_Map(1);
+        fade_in();
       }
     }
     else if((pad_result >> 5) & 0x01)
@@ -130,7 +137,9 @@ void move_player(char pad_result)
       
       if(canGoDown && player_y > 188)
       {
+        fade_out();
         change_Map(3);
+        fade_in();
       }
     }
     else
@@ -187,6 +196,18 @@ void move_bullets() {
 // main function, run after console reset
 void main(void) 
 {
+  title();
+  fade_in();
+  while(titleScreen)
+  {   
+    char pad_result = pad_poll(0); 
+    if((pad_result >> 3) & 0x01)
+    {
+      fade_out();
+      titleScreen = false;
+    }
+  }
+  
   setup();
   fade_in();
   
