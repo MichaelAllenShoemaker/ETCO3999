@@ -4,14 +4,13 @@
 #include "vrambuf.h"
 #include "bcd.h"
 #include <string.h>
-#include "Levels.h"
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
 #define NES_MIRRORING 1 ("vertical", 0 = "horizontal")
 
 #include "helpers.h"
-
+#include "Maps.h"
 
 typedef struct {
   byte xpos;
@@ -20,14 +19,12 @@ typedef struct {
   signed char dy;
 } bullet;
 
-
 #define COLOR_MISSILE		3
 #define COLOR_BOMB		2
 #define NAME_MISSILE	100
 #define YOFFSCREEN 240	// offscreen y position (hidden)
 #define xOFFSCREEN 240	// offscreen x position (hidden)
 #define PLAYERBULLET 0 // index of the players bullet in the array
-unsigned char cam_x = 1;
 // character position
 unsigned char player_x = 128;
 unsigned char player_y = 55;
@@ -47,15 +44,8 @@ void move_player(char pad_result)
     if((pad_result >> 7) & 0x01)
     {
       // moving to the right
-      if(cam_x + 1 < 256 && player_x > 128)
-      {
-        cam_x++;
-      }
-      else
-      {
-        if(player_x+1 < 230)
+      if(player_x+1 < 220)
           player_x += 1;
-      }
       playerDirection = 0;
       playerFramesToMove++;
       if(playerFramesToMove == framesBetweenChange)
@@ -69,16 +59,8 @@ void move_player(char pad_result)
     
     else if((pad_result >> 6) & 0x01)
     {
-      //moving to the left
-      if(cam_x - 1 > 1 && player_x < 128)
-      {
-        cam_x--;
-      }
-      else
-      {
-        if(player_x-1 > 12)
+      if(player_x-1 > 20)
           player_x -= 1;
-      }
       playerDirection = 2;
       playerFramesToMove++;
       if(playerFramesToMove == framesBetweenChange)
@@ -107,7 +89,7 @@ void move_player(char pad_result)
     else if((pad_result >> 5) & 0x01)
     {
       //moving down
-      if(player_y+1 < 200)
+      if(player_y+1 < 190)
       	player_y += 1;
       playerDirection = 3;
       playerFramesToMove++;
@@ -123,6 +105,7 @@ void move_player(char pad_result)
     {
       	playerSprite = 0;
     }
+    //If player presses space shoot a bullet in the direction they are walking
     if(pad_result & 0x01 && Bullets[PLAYERBULLET].ypos == YOFFSCREEN)
     {
       Bullets[PLAYERBULLET].ypos = player_y-8; // must be multiple of missile speed
@@ -149,7 +132,6 @@ void move_player(char pad_result)
      	Bullets[PLAYERBULLET].dx = 0; // player missile speed
       }
     }
-  
 }
 
 void move_bullets() {
@@ -199,9 +181,7 @@ void main(void)
     byte i = 0;
     // getting player input
     char pad_result = pad_poll(0); 
-    
-    split(cam_x, 0);
-    
+    ppu_wait_frame();
     // set sprite 0
     oam_id = oam_spr(1, 38, 0xa4, 0, 0);
     move_player(pad_result);

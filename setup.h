@@ -22,14 +22,11 @@ void setup()
   vram_unrle(TitleBar);
   put_str(NTADR_A(26,2), "LIFE");
   put_str(NTADR_A(17,2), "x9");
-  put_str(NTADR_A(17,3), "x9");
   
   //Filling in the maps
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  vram_unrle(leftMap); // my map01 is an array of 274 unsigned char's
-  
-  vram_adr(NTADR_B(0,5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  vram_unrle(rightMap); // my map01 is an array of 274 unsigned char's
+  vram_unrle(Map11); // my map01 is an array of 274 unsigned char's
+ 
   
   // enable PPU rendering (turn on screen)
   ppu_on_all();
@@ -42,7 +39,6 @@ void setup()
   // set sprite 0
   oam_clear();
   oam_spr(1, 38, 0xa4, 0, 0);
-  split(cam_x, 0);
   for (i=0; i<10; i++) {
     Bullets[i].ypos = YOFFSCREEN;
   }
