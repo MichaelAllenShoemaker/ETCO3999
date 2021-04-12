@@ -56,6 +56,7 @@ void title()
   put_str(NTADR_A(4,4), "the legend of");
   put_str(NTADR_A(5,18), "a game by:");
   put_str(NTADR_A(7,20), "michael shoemaker");
+  put_str(NTADR_A(5,25), "press start to play.");
   
   
   // enable PPU rendering (turn on screen)
