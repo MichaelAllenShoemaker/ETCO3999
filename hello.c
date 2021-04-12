@@ -29,9 +29,11 @@ typedef struct {
 #define YOFFSCREEN 240	// offscreen y position (hidden)
 #define xOFFSCREEN 240	// offscreen x position (hidden)
 #define PLAYERBULLET 0 // index of the players bullet in the array
+
 // character position
 unsigned char player_x = 120;
 unsigned char player_y = 120;
+
 //int for direction 0 = right, 1 = down, 2 = left, 3 = up
 int playerDirection = 0;
 int playerSprite = 0;
@@ -50,6 +52,7 @@ mapPiece Map[9];
 
 #include "Maps.h"
 #include "helpers.h"
+#include "CollisionHelper.h"
 // Move Function
 void move_player(char pad_result)
 {
@@ -57,7 +60,7 @@ void move_player(char pad_result)
     if((pad_result >> 7) & 0x01)
     {
       // moving to the right
-      if(player_x+1 < 220)
+      if(player_x+1 < 220 && checkCollision(player_x+1, player_y))
           player_x += 1;
       playerDirection = 0;
       playerFramesToMove++;
@@ -79,7 +82,7 @@ void move_player(char pad_result)
     
     else if((pad_result >> 6) & 0x01)
     {
-      if(player_x-1 > 20)
+      if(player_x-1 > 20 && checkCollision(player_x-1, player_y))
           player_x -= 1;
       playerDirection = 2;
       playerFramesToMove++;
@@ -101,7 +104,7 @@ void move_player(char pad_result)
     else if((pad_result >> 4) & 0x01)
     {
       //moving up
-      if(player_y-1 > 42)
+      if(player_y-1 > 42 && checkCollision(player_x, player_y-1))
       	player_y -= 1;
       playerDirection = 1;
       playerFramesToMove++;
@@ -123,7 +126,7 @@ void move_player(char pad_result)
     else if((pad_result >> 5) & 0x01)
     {
       //moving down
-      if(player_y+1 < 190)
+      if(player_y+1 < 190 && checkCollision(player_x, player_y + 1))
       	player_y += 1;
       playerDirection = 3;
       playerFramesToMove++;

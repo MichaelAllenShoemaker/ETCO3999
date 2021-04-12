@@ -30,6 +30,7 @@ void setup()
   Map[0].xpos = 50;
   Map[0].ypos = 28;
   Map[0].current = true;
+  mapIndex = 0;
  
   
   // enable PPU rendering (turn on screen)
