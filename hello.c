@@ -220,7 +220,7 @@ void moveEnemies()
       {
         Enemies[i].dy = -Enemies[i].dy;
       }
-      
+      enemyCollision(Enemies[i].xpos, Enemies[i].ypos);
     }
   }
 }
@@ -256,6 +256,8 @@ void main(void)
     // set sprite 0
     oam_id = oam_spr(1, 38, 0xa4, 0, 0);
     
+    if(iframes > 0)
+      iframes--;
     
     if(canMove)
     	move_player(pad_result);

@@ -6,6 +6,7 @@ bool secretUnlocked = false;
 bool haveLader = false;
 int health = 8;
 int bombs = 1;
+int iframes = 0;
 
 int numEnemies = 0;
 
@@ -19,6 +20,9 @@ typedef struct {
 
 enemy Enemies[6];
 
+byte iabs(int x) {
+  return x >= 0 ? x : -x;
+}
 
 void spawnEnemy(unsigned char x, unsigned char y, unsigned char dx, unsigned char dy)
 {
@@ -64,6 +68,13 @@ void fade_in() {
     ppu_wait_frame();
     ppu_wait_frame();
   }
+}
+
+void screenFlash()
+{
+    pal_bright(4);
+    ppu_wait_frame();
+    pal_bright(1);
 }
 
 void change_Map(int dir)
@@ -322,8 +333,10 @@ int extraSprites(int oamId)
 
 void enemyCollision(unsigned char enemyx, unsigned char enemyy)
 {
-  if (player_x <= enemyx && enemyx <= player_x + 16 && player_y <= enemyy && enemyy <= player_y+16)
+  if (iframes <= 0 && iabs(player_y - enemyy) < 16 &&  iabs(player_x - enemyx) < 16)
   {
    health--;
+   iframes = 30;
+   screenFlash();
   }
 }
