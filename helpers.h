@@ -7,6 +7,43 @@ bool haveLader = false;
 int health = 8;
 int bombs = 1;
 
+int numEnemies = 0;
+
+typedef struct {
+  int xpos;
+  int ypos;
+  int dx;
+  int dy;
+  int health;
+} enemy;
+
+enemy Enemies[6];
+
+
+void spawnEnemy(int x, int y, int dx, int dy)
+{
+  Enemies[numEnemies].xpos = x;
+  Enemies[numEnemies].ypos = y;
+  Enemies[numEnemies].dx = dx;
+  Enemies[numEnemies].dy = dy;
+  Enemies[numEnemies].health = 1;
+  numEnemies++;
+}
+
+void moveEnemies()
+{
+  byte i;
+  for (i=0; i<6; i++) { 
+    if (Enemies[i].ypos != YOFFSCREEN && Enemies[i].xpos != xOFFSCREEN) {
+      Enemies[i].xpos += Enemies[i].dx;
+      Enemies[i].xpos += Enemies[i].dy;
+      if(checkCollision(Enemies[i].xpos, Enemies[i].ypos))
+      {
+        
+      }
+    }
+  }
+}
 
 // Helper Functions
 void put_str(unsigned int adr, const char *str) {
@@ -129,6 +166,7 @@ void change_Map(int dir)
   }
   else if(map == 7)
   {
+    	spawnEnemy(90, 90, 1, 2);
       	vram_unrle(Map7);
     	Map[3].xpos = startx + 9;
     	Map[3].ypos = starty - 9;
