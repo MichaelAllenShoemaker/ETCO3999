@@ -21,8 +21,6 @@ void setup()
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 1));
   vram_unrle(TitleBar);
-  put_str(NTADR_A(26,2), "LIFE");
-  put_str(NTADR_A(17,2), "x1");
   
   //Filling in the maps
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)

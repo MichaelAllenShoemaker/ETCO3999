@@ -4,6 +4,8 @@ int startx = 50;
 int starty = 28;
 bool secretUnlocked = false;
 bool haveLader = false;
+int health = 8;
+int bombs = 1;
 
 
 // Helper Functions
@@ -237,5 +239,60 @@ int extraSprites(int oamId)
     oamId = oam_spr(x+8, y+8, 0xD7, 0x00, oamId);
     oamId = oam_spr(x, y+8, 0xD7, 0x00, oamId);
   }
+  //Heart1
+  if(health > 1)
+  	oamId = oam_spr(208, 23, 0xB5, 0x00, oamId);
+  else if (health == 1)
+    	oamId = oam_spr(208, 23, 0xB3, 0x00, oamId);
+  else
+    	oamId = oam_spr(208, 23, 0xB4, 0x00, oamId);
+  
+  //Heart2
+  if(health > 3)
+  	oamId = oam_spr(216, 23, 0xB5, 0x00, oamId);
+  else if (health == 3)
+    	oamId = oam_spr(216, 23, 0xB3, 0x00, oamId);
+  else
+    	oamId = oam_spr(216, 23, 0xB4, 0x00, oamId);
+  
+  
+  //Heart3
+  if(health > 5)
+  	oamId = oam_spr(224, 23, 0xB5, 0x00, oamId);
+  else if (health == 5)
+    	oamId = oam_spr(224, 23, 0xB3, 0x00, oamId);
+  else
+    	oamId = oam_spr(224, 23, 0xB4, 0x00, oamId);
+  
+  //Heart4
+  if(health > 7)
+  	oamId = oam_spr(232, 23, 0xB5, 0x00, oamId);
+  else if (health == 7)
+    	oamId = oam_spr(232, 23, 0xB3, 0x00, oamId);
+  else
+    	oamId = oam_spr(232, 23, 0xB4, 0x00, oamId);
+  
+  if(bombs == 0)
+    	oamId = oam_spr(144, 15, 0x30, 0x00, oamId);
+  if(bombs == 1)
+    	oamId = oam_spr(144, 15, 0x31, 0x00, oamId);
+  if(bombs == 2)
+    	oamId = oam_spr(144, 15, 0x32, 0x00, oamId);
+  if(bombs == 3)
+    	oamId = oam_spr(144, 15, 0x33, 0x00, oamId);
+  if(bombs == 4)
+    	oamId = oam_spr(144, 15, 0x34, 0x00, oamId);
+  if(bombs == 5)
+    	oamId = oam_spr(144, 15, 0x35, 0x00, oamId);
+  if(bombs == 6)
+    	oamId = oam_spr(144, 15, 0x36, 0x00, oamId);
+  if(bombs == 7)
+    	oamId = oam_spr(144, 15, 0x37, 0x00, oamId);
+  if(bombs == 8)
+    	oamId = oam_spr(144, 15, 0x38, 0x00, oamId);
+  if(bombs == 9)
+    	oamId = oam_spr(144, 15, 0x39, 0x00, oamId);
+  
+  
   return oamId;
 }
