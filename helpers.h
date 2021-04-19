@@ -3,6 +3,7 @@ int mapIndex = 0;
 int startx = 50;
 int starty = 28;
 bool secretUnlocked = false;
+bool haveLader = false;
 
 
 // Helper Functions
@@ -204,4 +205,37 @@ void change_Map(int dir)
   }
   ppu_on_all();
   canMove = true;
+}
+
+
+int extraSprites(int oamId)
+{
+  if(map==9 && secretUnlocked)
+  {
+    int x = 120;
+    int y = 119;
+    oamId = oam_spr(x, y, 0xA7, 0x02, oamId);
+    oamId = oam_spr(x+8, y, 0xA8, 0x02, oamId);
+    oamId = oam_spr(x+8, y+8, 0xA6, 0x02, oamId);
+    oamId = oam_spr(x, y+8, 0xA5, 0x02, oamId);
+  }
+  if(map==13 && haveLader)
+  {
+    int x = 120;
+    int y = 111;
+    oamId = oam_spr(x, y, 0x01, 0x00, oamId);
+    oamId = oam_spr(x+8, y, 0x01, 0x00, oamId);
+    oamId = oam_spr(x+8, y+8, 0x01, 0x00, oamId);
+    oamId = oam_spr(x, y+8, 0x01, 0x00, oamId);
+  }
+  if(map==4 && haveLader)
+  {
+    int x = 152;
+    int y = 126;
+    oamId = oam_spr(x, y, 0xD6, 0x00, oamId);
+    oamId = oam_spr(x+8, y, 0xD6, 0x00, oamId);
+    oamId = oam_spr(x+8, y+8, 0xD7, 0x00, oamId);
+    oamId = oam_spr(x, y+8, 0xD7, 0x00, oamId);
+  }
+  return oamId;
 }

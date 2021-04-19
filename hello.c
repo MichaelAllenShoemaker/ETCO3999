@@ -176,6 +176,15 @@ void move_player(char pad_result)
      	Bullets[PLAYERBULLET].dx = 0; // player missile speed
       }
     }
+    //Hit triggers
+    if(!secretUnlocked && map == 9 && player_x > 112 && player_x < 128 && player_y > 104 && player_y < 117)
+    {
+      secretUnlocked = true;
+    }
+    if(!haveLader && map == 13 && player_x > 112 && player_x < 128 && player_y > 104 && player_y < 117)
+    {
+      haveLader = true;
+    }
 }
 
 void move_bullets() {
@@ -246,11 +255,16 @@ void main(void)
     	mapPiece* map = &Map[i];
         if (map->ypos != YOFFSCREEN) {
           if(map->current)
-          	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x02, oam_id);
+          	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x01, oam_id);
+          else if(i == 1 && secretUnlocked && !haveLader)
+            	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x02, oam_id);
+          else if(i == 6 && haveLader)
+            	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x02, oam_id);
           else
-            	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x01, oam_id);
+            	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x00, oam_id);
     	}
   }
+    extraSprites(oam_id);
     
     // Do this to "hide" any remaining sprites
     vrambuf_flush();

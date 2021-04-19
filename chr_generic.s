@@ -431,10 +431,10 @@
 .byte $EF,$EF,$E0,$FF,$EF,$E0,$EF,$EF
 .byte $0B,$0B,$FB,$0B,$FB,$FB,$0B,$0B
 .byte $FE,$FE,$0E,$FE,$F6,$0E,$FE,$FE
-.byte $00,$00,$00,$0C,$3E,$3E,$7B,$FB
-.byte $00,$00,$00,$38,$7C,$7C,$FE,$FE
-.byte $7B,$F3,$F3,$66,$7E,$3C,$00,$00
-.byte $FE,$FE,$7C,$7C,$38,$00,$00,$00
+.byte $FF,$00,$FF,$FF,$34,$34,$34,$34
+.byte $FF,$FF,$FF,$08,$DB,$DB,$DB,$DB
+.byte $34,$34,$34,$34,$FF,$FF,$00,$FF
+.byte $DB,$DB,$DB,$DB,$08,$FF,$FF,$FF
 .byte $00,$17,$0F,$1F,$12,$30,$08,$18
 .byte $00,$00,$00,$00,$0D,$0F,$07,$07
 .byte $0F,$1F,$1F,$13,$03,$0E,$0E,$0F
