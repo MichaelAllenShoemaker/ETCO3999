@@ -62,7 +62,8 @@ void setup()
   playerSprite = 0;
   playerFramesToMove = 0;
   framesBetweenChange = 10;
-
+  Bombs[0].xpos = xOFFSCREEN;
+  Bombs[0].ypos = YOFFSCREEN;
 
   titleScreen = true;
   canGoRight = true;
