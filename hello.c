@@ -55,6 +55,7 @@ bool canGoLeft = false;
 bool canGoDown = false;
 bool canMove = true;
 bool dead = false;
+bool canChangeMap = true;
 
 bullet Bullets[10];
 mapPiece Map[9];
@@ -81,7 +82,7 @@ void move_player(char pad_result)
         	playerSprite = 0;
       }
       
-      if(canGoRight && player_x > 218)
+      if(canChangeMap && canGoRight && player_x > 218)
       {
         fade_out();
         change_Map(0);
@@ -103,7 +104,7 @@ void move_player(char pad_result)
         	playerSprite = 0;
       }
       
-      if(canGoLeft && player_x < 22)
+      if(canChangeMap && canGoLeft && player_x < 22)
       {
         fade_out();
         change_Map(2);
@@ -125,7 +126,7 @@ void move_player(char pad_result)
         	playerSprite = 0;
       }
       
-      if(canGoUp && player_y < 44)
+      if(canChangeMap && canGoUp && player_y < 44)
       {
         fade_out();
         change_Map(1);
@@ -147,7 +148,7 @@ void move_player(char pad_result)
         	playerSprite = 0;
       }
       
-      if(canGoDown && player_y > 188)
+      if(canChangeMap && canGoDown && player_y > 188)
       {
         fade_out();
         change_Map(3);
@@ -198,6 +199,7 @@ void move_player(char pad_result)
 
 void move_bullets() {
   byte i;
+  byte j;
   for (i=0; i<10; i++) { 
     if (Bullets[i].ypos != YOFFSCREEN && Bullets[i].xpos != xOFFSCREEN) {
       // hit the bottom or top?
@@ -208,6 +210,17 @@ void move_bullets() {
         Bullets[i].xpos = xOFFSCREEN;
         Bullets[i].ypos = YOFFSCREEN;
       }
+      for (j=0; j<6; j++)
+      {
+         if (iabs(Bullets[i].ypos - Enemies[j].ypos) < 16 &&  iabs(Bullets[i].xpos - Enemies[j].xpos < 16))
+         {
+           Enemies[j].xpos = xOFFSCREEN;
+           Enemies[j].ypos = YOFFSCREEN;
+           Enemies[j].dx = 0;
+           Enemies[j].dy = 0;
+           Enemies[j].health = 0;
+         }
+      }
     }
   }
 }
@@ -215,8 +228,10 @@ void move_bullets() {
 void moveEnemies()
 {
   byte i;
+  canChangeMap = true;
   for (i=0; i<6; i++) { 
     if (Enemies[i].ypos != YOFFSCREEN && Enemies[i].xpos != xOFFSCREEN) {
+      canChangeMap = false;
       Enemies[i].xpos += Enemies[i].dx;
       Enemies[i].ypos += Enemies[i].dy;
       if(Enemies[i].xpos > 220 || Enemies[i].xpos < 20)
