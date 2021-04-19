@@ -9,7 +9,11 @@
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
+//#link "apu.c"
 #define NES_MIRRORING 0 ("vertical", 0 = "horizontal")
+#include "apu.h"
+#include "Sounds.h"
+
 
 typedef struct {
   byte xpos;
@@ -67,6 +71,7 @@ int numberTillDrop = 10;
 bullet Bullets[10];
 mapPiece Map[9];
 bomb Bombs[1];
+
 
 #include "Maps.h"
 #include "helpers.h"
@@ -295,6 +300,9 @@ void runGame()
   // game loop
   while (1)
   {
+    if (!music_ptr) start_music(music1);
+    waitvsync();
+    play_music();
     if(!dead)
     {
     // do this at the start of each frame
