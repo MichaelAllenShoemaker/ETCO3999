@@ -387,8 +387,8 @@
 .byte $C0,$00,$00,$04,$1C,$3C,$1C,$00
 .byte $FF,$2F,$7F,$FF,$FF,$F2,$F7,$FD
 .byte $00,$FE,$FC,$D0,$00,$EF,$CF,$0F
-.byte $FF,$F9,$F9,$FF,$FF,$9F,$9F,$FF
-.byte $0F,$6F,$6F,$0F,$F0,$F6,$F6,$F0
+.byte $FF,$BD,$DB,$E7,$E7,$DB,$BD,$FF
+.byte $00,$7E,$7E,$7E,$7E,$7E,$7E,$00
 .byte $FF,$FF,$DF,$FF,$FF,$FF,$FF,$FF
 .byte $00,$7E,$7C,$7E,$74,$7C,$50,$00
 .byte $05,$67,$4F,$1F,$9D,$3D,$A9,$FF

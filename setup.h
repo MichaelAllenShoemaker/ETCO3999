@@ -10,7 +10,7 @@ const char PALETTE[32] =
   
   0x05, 0x17, 0x27, 0x00, // sprite palette 0
   0x16, 0x37, 0x16, 0x00, // sprite palette 1
-  0x17, 0x21, 0x11, 0x00, // sprite palette 2
+  0x28, 0x21, 0x11, 0x00, // sprite palette 2
   0x0F, 0x20, 0x27, // sprite palette 3
 };
 
@@ -26,6 +26,7 @@ void reset_bullets() {
 
 void reset_enemies() {
   byte i;
+  numEnemies = 0;
   for (i=0; i<6; i++) { 
     Enemies[i].ypos = YOFFSCREEN;
     Enemies[i].xpos = xOFFSCREEN;

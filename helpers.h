@@ -367,6 +367,45 @@ int extraSprites(int oamId)
   if(bombs == 9)
     	oamId = oam_spr(144, 15, 0x39, 0x00, oamId);
   
+  if(!canChangeMap)
+  {
+    if(canGoLeft)
+    {
+      int topx = 8;
+      int topy = 127;
+      oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+    }
+    if(canGoRight)
+    {
+      int topx = 231;
+      int topy = 127;
+      oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+    }
+    if(canGoUp)
+    {
+      int topx = 119;
+      int topy = 39;
+      oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+    }
+    if(canGoDown)
+    {
+      int topx = 119;
+      int topy = 207;
+      oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+      oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+    }
+  }
   
   return oamId;
 }
