@@ -14,9 +14,79 @@ const char PALETTE[32] =
   0x0F, 0x20, 0x27, // sprite palette 3
 };
 
+void reset_bullets() {
+  byte i;
+  for (i=0; i<10; i++) { 
+    Bullets[i].ypos = YOFFSCREEN;
+    Bullets[i].xpos = xOFFSCREEN;
+    Bullets[i].dx = 0;
+    Bullets[i].dy = 0;
+  }
+}
+
+void reset_enemies() {
+  byte i;
+  for (i=0; i<6; i++) { 
+    Enemies[i].ypos = YOFFSCREEN;
+    Enemies[i].xpos = xOFFSCREEN;
+    Enemies[i].dx = 0;
+    Enemies[i].dy = 0;
+    Enemies[i].health = 0;
+  }
+}
+
+void reset_map() {
+  byte i;
+  for (i=0; i<9; i++) { 
+    Map[i].ypos = YOFFSCREEN;
+    Map[i].xpos = xOFFSCREEN;
+    Map[i].current = false;
+  }
+}
+
 void setup()
 {
+    
   byte i = 0;
+  
+  reset_bullets();
+  reset_enemies();
+  reset_map();
+  
+  //reset all variables
+  player_x = 120;
+  player_y = 120;
+
+  //int for direction 0 = right, 1 = down, 2 = left, 3 = up
+  playerDirection = 0;
+  playerSprite = 0;
+  playerFramesToMove = 0;
+  framesBetweenChange = 10;
+
+
+  titleScreen = true;
+  canGoRight = true;
+  canGoUp = false;
+  canGoLeft = false;
+  canGoDown = false;
+  canMove = true;
+  dead = false;
+
+  map = 11;
+  mapIndex = 0;
+  startx = 50;
+  starty = 28;
+  secretUnlocked = false;
+  haveLader = false;
+  health = 8;
+  bombs = 1;
+  iframes = 0;
+  vbright = 4;
+
+  numEnemies = 0;
+  
+  //DONE
+  
   ppu_off();
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 1));
@@ -49,6 +119,8 @@ void setup()
 
 void title()
 {
+  titleScreen = true;
+  ppu_off();
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 0));
   vram_unrle(TitleScreen);

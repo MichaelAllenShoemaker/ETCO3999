@@ -1,15 +1,15 @@
-int map = 11;
-int mapIndex = 0;
-int startx = 50;
-int starty = 28;
-bool secretUnlocked = false;
-bool haveLader = false;
-int health = 0;
-int bombs = 1;
-int iframes = 0;
-int vbright = 4;
+int map;
+int mapIndex;
+int startx;
+int starty;
+bool secretUnlocked;
+bool haveLader;
+int health;
+int bombs;
+int iframes;
+int vbright;
 
-int numEnemies = 0;
+int numEnemies;
 
 typedef struct {
   unsigned char xpos;
@@ -34,6 +34,7 @@ void spawnEnemy(unsigned char x, unsigned char y, unsigned char dx, unsigned cha
   Enemies[numEnemies].health = 1;
   numEnemies++;
 }
+
 
 void pal_fade_to(unsigned to)
 {

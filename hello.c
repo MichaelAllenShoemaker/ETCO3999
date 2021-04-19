@@ -9,7 +9,7 @@
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
-#define NES_MIRRORING 1 ("vertical", 0 = "horizontal")
+#define NES_MIRRORING 0 ("vertical", 0 = "horizontal")
 
 typedef struct {
   byte xpos;
@@ -231,11 +231,9 @@ void moveEnemies()
     }
   }
 }
-
-
 #include "setup.h"
-// main function, run after console reset
-void main(void) 
+
+void runGame()
 {
   title();
   fade_in();
@@ -308,25 +306,31 @@ void main(void)
             	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x02, oam_id);
           else
             	oam_id = oam_spr(map->xpos, map->ypos, 0x01, 0x00, oam_id);
-    	}
-  }
+    		}
+  	}
     extraSprites(oam_id);
     
     // Do this to "hide" any remaining sprites
     vrambuf_flush();
     oam_hide_rest(oam_id);
-    if(health == 0)
-    {
-      dead = true;
-      //change_Map(10);
+      if(health == 0)
+      {
+        dead = true;
+        fade_out();
+        break;
+      }
     }
-    }
-    else
-    {
+  }
       //show title screen
-      scroll(-8,240);//title is aligned to the color attributes, so shift it a bit to the right
-     
-	
+      scroll(0,240);//title is aligned to the color attributes, so shift it a bit to the right
+      ppu_off();
+      vram_adr(NAMETABLE_A); // Zelda probably started at 0x28d0 (8 rows below stats area)
+      vram_unrle(GameOver);
+  
+      vram_adr(NAMETABLE_C); // Zelda probably started at 0x28d0 (8 rows below stats area)
+      vram_fill(0x01,900);
+
+      
       pal_bright(4);
       ppu_on_bg();
       delay(20);//delay just to make it look better
@@ -341,7 +345,7 @@ void main(void)
       {
         ppu_wait_frame();
 
-        scroll(-8,iy>>4);
+        scroll(0,iy>>4);
 
         if(pad_trigger(0)&PAD_START) break;
 
@@ -366,13 +370,19 @@ void main(void)
         }
       }
 
-      scroll(-8,0);//if start is pressed, show the title at whole
+      scroll(0,0);//if start is pressed, show the title at whole
       for(i=0;i<16;++i)//and blink the text faster
       {
         pal_col(2,i&1?0x0f:0x20);
         delay(4);
       }
       pal_fade_to(4);
-    }
-  }
+      runGame();
+}
+
+
+// main function, run after console reset
+void main(void) 
+{
+  runGame();
 }
