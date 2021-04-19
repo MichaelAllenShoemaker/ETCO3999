@@ -311,8 +311,67 @@ void main(void)
     if(health == 0)
     {
       dead = true;
-      change_Map(10);
     }
+    }
+    else
+    {
+      //show title screen
+      scroll(-8,240);//title is aligned to the color attributes, so shift it a bit to the right
+
+      vram_adr(NAMETABLE_A);
+      vram_unrle(GameOver);
+
+      vram_adr(NAMETABLE_C);//clear second nametable, as it is visible in the jumping effect
+      vram_fill(0,1024);
+
+      pal_bright(4);
+      ppu_on_bg();
+      delay(20);//delay just to make it look better
+
+      iy=240<<FP_BITS;
+      dy=-8<<FP_BITS;
+      frame_cnt=0;
+      wait=160;
+      bright=4;
+
+      while(1)
+      {
+        ppu_wait_frame();
+
+        scroll(-8,iy>>FP_BITS);
+
+        if(pad_trigger(0)&PAD_START) break;
+
+        iy+=dy;
+
+        if(iy<0)
+        {
+          iy=0;
+          dy=-dy>>1;
+        }
+
+        if(dy>(-8<<FP_BITS)) dy-=2;
+
+        if(wait)
+        {
+          --wait;
+        }
+        else
+        {
+          pal_col(2,(frame_cnt&32)?0x0f:0x20);//blinking press start text
+          ++frame_cnt;
+        }
+      }
+
+      scroll(-8,0);//if start is pressed, show the title at whole
+
+      for(i=0;i<16;++i)//and blink the text faster
+      {
+        pal_col(2,i&1?0x0f:0x20);
+        delay(4);
+      }
+
+      pal_fade_to(0);
     }
   }
 }

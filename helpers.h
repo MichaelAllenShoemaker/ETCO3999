@@ -108,16 +108,7 @@ void change_Map(int dir)
   ppu_off();
   //Load the correct map
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  if(dir == 10)
-  {
-    	vram_unrle(GameOver);
-    
-        canGoRight = false;
-        canGoUp = false;
-        canGoLeft = false;
-        canGoDown = false;
-  }
-  else if(map == 11)
+  if(map == 11)
   {
       	vram_unrle(Map11);
       	Map[0].current = true;
