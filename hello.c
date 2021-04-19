@@ -203,6 +203,22 @@ void move_bullets() {
   }
 }
 
+void moveEnemies()
+{
+  byte i;
+  for (i=0; i<6; i++) { 
+    if (Enemies[i].ypos != YOFFSCREEN && Enemies[i].xpos != xOFFSCREEN) {
+      Enemies[i].xpos += Enemies[i].dx;
+      Enemies[i].ypos += Enemies[i].dy;
+      if(checkCollision(Enemies[i].xpos, Enemies[i].ypos) || Enemies[i].xpos > 220 || Enemies[i].xpos < 20 || Enemies[i].ypos > 190 || Enemies[i].ypos < 42)
+      {
+        Enemies[i].dx = Enemies[i].dx;
+        Enemies[i].dy = -Enemies[i].dy;
+      }
+    }
+  }
+}
+
 
 #include "setup.h"
 // main function, run after console reset
@@ -249,6 +265,14 @@ void main(void)
       		oam_id = oam_spr(mis->xpos, mis->ypos, 0x16,
                       0x02,
                       oam_id);
+        }
+    }
+    
+    moveEnemies();
+    for (i=0; i<6; i++) {
+    	enemy* ene = &Enemies[i];
+    	if (ene->ypos != YOFFSCREEN) {
+      		oam_id = oam_spr(ene->xpos, ene->ypos, 0xB6, 0x00,oam_id);
         }
     }
     for (i=0; i<9; i++) {
