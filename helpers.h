@@ -7,6 +7,7 @@ bool haveLader = false;
 int health = 8;
 int bombs = 1;
 int iframes = 0;
+int vbright = 4;
 
 int numEnemies = 0;
 
@@ -70,12 +71,6 @@ void fade_in() {
   }
 }
 
-void screenFlash()
-{
-    pal_bright(4);
-    ppu_wait_frame();
-    pal_bright(1);
-}
 
 void change_Map(int dir)
 {
@@ -113,7 +108,16 @@ void change_Map(int dir)
   ppu_off();
   //Load the correct map
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  if(map == 11)
+  if(dir == 10)
+  {
+    	vram_unrle(GameOver);
+    
+        canGoRight = false;
+        canGoUp = false;
+        canGoLeft = false;
+        canGoDown = false;
+  }
+  else if(map == 11)
   {
       	vram_unrle(Map11);
       	Map[0].current = true;
@@ -333,10 +337,10 @@ int extraSprites(int oamId)
 
 void enemyCollision(unsigned char enemyx, unsigned char enemyy)
 {
-  if (iframes <= 0 && iabs(player_y - enemyy) < 16 &&  iabs(player_x - enemyx) < 16)
+  if (iframes <= 0 && iabs(player_y+8 - enemyy) < 16 &&  iabs(player_x+8 - enemyx) < 16)
   {
    health--;
    iframes = 30;
-   screenFlash();
+   vbright = 8;
   }
 }

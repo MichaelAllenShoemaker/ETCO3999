@@ -47,6 +47,7 @@ bool canGoUp = false;
 bool canGoLeft = false;
 bool canGoDown = false;
 bool canMove = true;
+bool dead = false;
 
 bullet Bullets[10];
 mapPiece Map[9];
@@ -200,7 +201,6 @@ void move_bullets() {
         Bullets[i].xpos = xOFFSCREEN;
         Bullets[i].ypos = YOFFSCREEN;
       }
-      enemyCollision(Bullets[i].xpos,Bullets[i].xpos);
     }
   }
 }
@@ -248,6 +248,8 @@ void main(void)
   // game loop
   while (1)
   {
+    if(!dead)
+    {
     // do this at the start of each frame
     int oam_id = 0;
     byte i = 0;
@@ -258,6 +260,11 @@ void main(void)
     
     if(iframes > 0)
       iframes--;
+    
+    // flash effect
+    if (vbright > 4) {
+      pal_bright(--vbright);
+    }
     
     if(canMove)
     	move_player(pad_result);
@@ -301,5 +308,11 @@ void main(void)
     // Do this to "hide" any remaining sprites
     vrambuf_flush();
     oam_hide_rest(oam_id);
+    if(health == 0)
+    {
+      dead = true;
+      change_Map(10);
+    }
+    }
   }
 }
