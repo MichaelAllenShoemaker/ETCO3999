@@ -197,6 +197,9 @@ void change_Map(int dir)
   }
   else if(map == 2)
   {
+        spawnEnemy(45, 130, -2, 1);
+        spawnEnemy(180, 64, 1, 1);
+        spawnEnemy(60, 64, 1, -1);
       	vram_unrle(Map2);
         Map[4].xpos = startx + 9;
     	Map[4].ypos = starty - 18;

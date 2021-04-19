@@ -223,6 +223,7 @@ void move_bullets() {
          if (Enemies[j].xpos != xOFFSCREEN && iabs(Bullets[i].ypos - Enemies[j].ypos) < 16 &&  iabs(Bullets[i].xpos - Enemies[j].xpos < 16))
          {
            // We killed an enemy
+           numEnemies--;
            Enemies[j].xpos = xOFFSCREEN;
            Enemies[j].ypos = YOFFSCREEN;
            Enemies[j].dx = 0;
