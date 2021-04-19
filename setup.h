@@ -72,6 +72,7 @@ void setup()
   canMove = true;
   dead = false;
 
+  numberTillDrop = 3;
   map = 11;
   mapIndex = 0;
   startx = 50;

@@ -24,6 +24,12 @@ typedef struct {
   bool current;
 } mapPiece;
 
+typedef struct
+{
+  byte xpos;
+  byte ypos;
+} bomb;
+
 #define COLOR_MISSILE		3
 #define COLOR_BOMB		2
 #define NAME_MISSILE	100
@@ -56,9 +62,11 @@ bool canGoDown = false;
 bool canMove = true;
 bool dead = false;
 bool canChangeMap = true;
+int numberTillDrop = 3;
 
 bullet Bullets[10];
 mapPiece Map[9];
+bomb Bombs[1];
 
 #include "Maps.h"
 #include "helpers.h"
@@ -214,11 +222,21 @@ void move_bullets() {
       {
          if (iabs(Bullets[i].ypos - Enemies[j].ypos) < 16 &&  iabs(Bullets[i].xpos - Enemies[j].xpos < 16))
          {
+           // We killed an enemy
            Enemies[j].xpos = xOFFSCREEN;
            Enemies[j].ypos = YOFFSCREEN;
            Enemies[j].dx = 0;
            Enemies[j].dy = 0;
            Enemies[j].health = 0;
+           numberTillDrop--;
+           if(numberTillDrop == 0)
+           {
+             // We drop a bomb
+             numberTillDrop = 3;
+             Bombs[0].xpos = 120;
+             Bombs[0].ypos = 120;
+           }
+           
          }
       }
     }
@@ -309,6 +327,18 @@ void runGame()
     	if (ene->ypos != YOFFSCREEN) {
       		oam_id = oam_spr(ene->xpos, ene->ypos, 0xB6, 0x00,oam_id);
         }
+    }
+    if(Bombs[0].xpos != xOFFSCREEN)
+    {
+      oam_id = oam_spr(Bombs[0].xpos, Bombs[0].ypos, 0xB2, 0x00, oam_id);
+      if (iabs(Bombs[0].ypos - player_y+8) < 16 &&  iabs(Bombs[0].xpos - player_x+8) < 16)
+      {
+        //We picked up the bomb
+        if(bombs != 9)
+        	bombs ++;
+        Bombs[0].xpos = xOFFSCREEN;
+        Bombs[0].ypos = YOFFSCREEN;
+      }
     }
     for (i=0; i<9; i++) {
     	mapPiece* map = &Map[i];
