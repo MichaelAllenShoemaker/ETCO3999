@@ -152,7 +152,7 @@ void move_player(char pad_result)
     //If player presses space shoot a bullet in the direction they are walking
     if(pad_result & 0x01 && Bullets[PLAYERBULLET].ypos == YOFFSCREEN)
     {
-      Bullets[PLAYERBULLET].ypos = player_y-8; // must be multiple of missile speed
+      Bullets[PLAYERBULLET].ypos = player_y+6; // must be multiple of missile speed
       Bullets[PLAYERBULLET].xpos = player_x+4; // player X position
       //int for direction 0 = right, 1 = down, 2 = left, 3 = up
       if(playerDirection == 0)
