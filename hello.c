@@ -5,6 +5,7 @@
 #include "bcd.h"
 #include <string.h>
 
+
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 //#link "vrambuf.c"
@@ -199,6 +200,7 @@ void move_bullets() {
         Bullets[i].xpos = xOFFSCREEN;
         Bullets[i].ypos = YOFFSCREEN;
       }
+      enemyCollision(Bullets[i].xpos,Bullets[i].xpos);
     }
   }
 }
@@ -210,11 +212,15 @@ void moveEnemies()
     if (Enemies[i].ypos != YOFFSCREEN && Enemies[i].xpos != xOFFSCREEN) {
       Enemies[i].xpos += Enemies[i].dx;
       Enemies[i].ypos += Enemies[i].dy;
-      if(checkCollision(Enemies[i].xpos, Enemies[i].ypos) || Enemies[i].xpos > 220 || Enemies[i].xpos < 20 || Enemies[i].ypos > 190 || Enemies[i].ypos < 42)
+      if(Enemies[i].xpos > 220 || Enemies[i].xpos < 20)
       {
-        Enemies[i].dx = Enemies[i].dx;
+        Enemies[i].dx = -Enemies[i].dx;
+      }
+      if(Enemies[i].ypos > 190 || Enemies[i].ypos < 60)
+      {
         Enemies[i].dy = -Enemies[i].dy;
       }
+      
     }
   }
 }

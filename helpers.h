@@ -319,3 +319,11 @@ int extraSprites(int oamId)
   
   return oamId;
 }
+
+void enemyCollision(unsigned char enemyx, unsigned char enemyy)
+{
+  if (player_x <= enemyx && enemyx <= player_x + 16 && player_y <= enemyy && enemyy <= player_y+16)
+  {
+   health--;
+  }
+}
