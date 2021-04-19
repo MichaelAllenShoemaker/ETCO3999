@@ -62,7 +62,7 @@ bool canGoDown = false;
 bool canMove = true;
 bool dead = false;
 bool canChangeMap = true;
-int numberTillDrop = 3;
+int numberTillDrop = 10;
 
 bullet Bullets[10];
 mapPiece Map[9];
@@ -71,6 +71,7 @@ bomb Bombs[1];
 #include "Maps.h"
 #include "helpers.h"
 #include "CollisionHelper.h"
+#include "setup.h"
 // Move Function
 void move_player(char pad_result)
 {
@@ -194,6 +195,14 @@ void move_player(char pad_result)
      	Bullets[PLAYERBULLET].dx = 0; // player missile speed
       }
     }
+  
+    //Bombs
+     if(bombs > 0 && (pad_result >> 1) & 0x01)
+     {
+       bombs--;
+       reset_enemies();
+       bombScreen();
+     }
     //Hit triggers
     if(!secretUnlocked && map == 9 && player_x > 112 && player_x < 128 && player_y > 104 && player_y < 117)
     {
@@ -233,7 +242,7 @@ void move_bullets() {
            if(numberTillDrop == 0)
            {
              // We drop a bomb
-             numberTillDrop = 3;
+             numberTillDrop = 10;
              Bombs[0].xpos = 120;
              Bombs[0].ypos = 120;
            }
@@ -265,7 +274,6 @@ void moveEnemies()
     }
   }
 }
-#include "setup.h"
 
 void runGame()
 {

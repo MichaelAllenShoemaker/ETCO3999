@@ -89,6 +89,16 @@ void fade_in() {
   }
 }
 
+void bombScreen()
+{
+  byte vb;
+  pal_bright(8);
+  for (vb=0; vb<=20; vb++) {
+    ppu_wait_frame();
+  }
+  pal_bright(4);
+}
+
 
 void change_Map(int dir)
 {
