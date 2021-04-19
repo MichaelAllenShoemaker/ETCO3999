@@ -4,7 +4,7 @@ int startx = 50;
 int starty = 28;
 bool secretUnlocked = false;
 bool haveLader = false;
-int health = 8;
+int health = 0;
 int bombs = 1;
 int iframes = 0;
 int vbright = 4;
@@ -33,6 +33,23 @@ void spawnEnemy(unsigned char x, unsigned char y, unsigned char dx, unsigned cha
   Enemies[numEnemies].dy = dy;
   Enemies[numEnemies].health = 1;
   numEnemies++;
+}
+
+void pal_fade_to(unsigned to)
+{
+  while(bright!=to)
+  {
+    delay(4);
+    if(bright<to) ++bright; else --bright;
+    pal_bright(bright);
+  }
+
+  if(!bright)
+  {
+    ppu_off();
+    set_vram_update(NULL);
+    scroll(0,0);
+  }
 }
 
 // Helper Functions
@@ -108,7 +125,15 @@ void change_Map(int dir)
   ppu_off();
   //Load the correct map
   vram_adr(NTADR_A(1, 5)); // Zelda probably started at 0x28d0 (8 rows below stats area)
-  if(map == 11)
+  if(dir == 10)
+  {
+      vram_adr(NAMETABLE_A);
+      vram_unrle(GameOver);
+
+      vram_adr(NAMETABLE_C);//clear second nametable, as it is visible in the jumping effect
+      vram_fill(0,1024);
+  }
+  else if(map == 11)
   {
       	vram_unrle(Map11);
       	Map[0].current = true;

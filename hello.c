@@ -41,6 +41,13 @@ int playerSprite = 0;
 int playerFramesToMove = 0;
 int framesBetweenChange = 10;
 
+//GameOver Stuff
+static int iy,dy;
+static unsigned char frame_cnt;
+static unsigned char bright;
+static unsigned char wait;
+static unsigned char i;
+
 bool titleScreen = true;
 bool canGoRight = true;
 bool canGoUp = false;
@@ -311,25 +318,21 @@ void main(void)
     if(health == 0)
     {
       dead = true;
+      //change_Map(10);
     }
     }
     else
     {
       //show title screen
       scroll(-8,240);//title is aligned to the color attributes, so shift it a bit to the right
-
-      vram_adr(NAMETABLE_A);
-      vram_unrle(GameOver);
-
-      vram_adr(NAMETABLE_C);//clear second nametable, as it is visible in the jumping effect
-      vram_fill(0,1024);
-
+     
+	
       pal_bright(4);
       ppu_on_bg();
       delay(20);//delay just to make it look better
 
-      iy=240<<FP_BITS;
-      dy=-8<<FP_BITS;
+      iy=240<<4;
+      dy=-8<<4;
       frame_cnt=0;
       wait=160;
       bright=4;
@@ -338,7 +341,7 @@ void main(void)
       {
         ppu_wait_frame();
 
-        scroll(-8,iy>>FP_BITS);
+        scroll(-8,iy>>4);
 
         if(pad_trigger(0)&PAD_START) break;
 
@@ -350,7 +353,7 @@ void main(void)
           dy=-dy>>1;
         }
 
-        if(dy>(-8<<FP_BITS)) dy-=2;
+        if(dy>(-8<<4)) dy-=2;
 
         if(wait)
         {
@@ -364,14 +367,12 @@ void main(void)
       }
 
       scroll(-8,0);//if start is pressed, show the title at whole
-
       for(i=0;i<16;++i)//and blink the text faster
       {
         pal_col(2,i&1?0x0f:0x20);
         delay(4);
       }
-
-      pal_fade_to(0);
+      pal_fade_to(4);
     }
   }
 }
