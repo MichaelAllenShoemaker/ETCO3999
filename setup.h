@@ -124,7 +124,6 @@ void setup()
 void title()
 {
   titleScreen = true;
-  music_init();
   ppu_off();
   // Setting Up Status Bar
   vram_adr(NTADR_A(0, 0));
