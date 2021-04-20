@@ -11,6 +11,18 @@
 //#link "vrambuf.c"
 #define NES_MIRRORING 0 ("vertical", 0 = "horizontal")
 
+// famitone2 library
+//#link "famitone2.s"
+
+// music and sfx
+//#link "music_dangerstreets.s"
+extern char danger_streets_music_data[];
+//#link "demosounds.s"
+extern char demo_sounds[];
+
+// indices of sound effects (0..3)
+typedef enum { SND_START, SND_HIT, SND_COIN, SND_JUMP } SFXIndex;
+
 
 typedef struct {
   byte xpos;
@@ -74,6 +86,13 @@ bomb Bombs[1];
 #include "helpers.h"
 #include "CollisionHelper.h"
 #include "setup.h"
+
+void setup_sounds() {
+  famitone_init(danger_streets_music_data);
+  sfx_init(demo_sounds);
+  nmi_set_callback(famitone_update);
+}
+
 // Move Function
 void move_player(char pad_result)
 {
@@ -279,6 +298,9 @@ void moveEnemies()
 
 void runGame()
 {
+  setup_sounds();		// init famitone library
+  sfx_play(SND_START,0);	// play starting sound
+  music_play(0);		// start the music
   title();
   fade_in();
   while(titleScreen)
@@ -293,6 +315,7 @@ void runGame()
   
   setup();
   fade_in();
+  
   
   // game loop
   while (1)
