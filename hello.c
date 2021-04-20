@@ -15,8 +15,8 @@
 //#link "famitone2.s"
 
 // music and sfx
-//#link "music_dangerstreets.s"
-extern char danger_streets_music_data[];
+//#link "MySongDump.s"
+extern char MySongDump_music_data[];
 //#link "demosounds.s"
 extern char demo_sounds[];
 
@@ -88,7 +88,7 @@ bomb Bombs[1];
 #include "setup.h"
 
 void setup_sounds() {
-  famitone_init(danger_streets_music_data);
+  //famitone_init(MySongDump_music_data);
   sfx_init(demo_sounds);
   nmi_set_callback(famitone_update);
 }
