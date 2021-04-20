@@ -108,6 +108,8 @@ void change_Map(int dir)
   //Update the old Minimap
   Map[mapIndex].current = false;
   
+  sfx_play(SND_START,0);	// play starting sound
+  
   //Get new map direction 0 = right, 1 = down, 2 = left, 3 = up
   if(dir == 0)
   {
@@ -156,6 +158,7 @@ void change_Map(int dir)
   }
   else if(map == 12)
   {
+        spawnEnemy(125, 125, 1, 0);
     	if(secretUnlocked)
         {
           vram_unrle(Map12Unlocked);
@@ -194,6 +197,7 @@ void change_Map(int dir)
   else if(map == 7)
   {
     	spawnEnemy(90, 90, 1, 2);
+        spawnEnemy(150, 90, -1, 2);
       	vram_unrle(Map7);
     	Map[3].xpos = startx + 9;
     	Map[3].ypos = starty - 9;
@@ -208,7 +212,7 @@ void change_Map(int dir)
   else if(map == 2)
   {
         spawnEnemy(45, 130, -2, 1);
-        spawnEnemy(180, 64, 1, 1);
+        spawnEnemy(170, 64, 1, 1);
         spawnEnemy(60, 64, 1, -1);
       	vram_unrle(Map2);
         Map[4].xpos = startx + 9;
@@ -255,6 +259,7 @@ void change_Map(int dir)
   }
   else if(map == 5)
   {
+        music_play(1);		// start the music
       	vram_unrle(Map5);
     	Map[7].xpos = startx + 36;
     	Map[7].ypos = starty - 18;
@@ -268,6 +273,8 @@ void change_Map(int dir)
   }
   else
   {
+        spawnEnemy(45, 75, 1, 1);
+        spawnEnemy(205, 75, -1, 1);
       	vram_unrle(Map9);
     	Map[8].xpos = startx + 27;
     	Map[8].ypos = starty - 9;
@@ -371,21 +378,45 @@ int extraSprites(int oamId)
   {
     if(canGoLeft)
     {
-      int topx = 8;
-      int topy = 127;
-      oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
-      oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
-      oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
-      oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+      if(map == 12)
+      {
+        int topx = 8;
+        int topy = 119;
+        oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+      }
+      else
+      {
+        int topx = 8;
+        int topy = 127;
+        oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+      }
     }
     if(canGoRight)
     {
+      if(map == 12)
+      {
+        int topx = 231;
+        int topy = 119;
+        oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
+        oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+      }
+      else
+      {
       int topx = 231;
       int topy = 127;
       oamId = oam_spr(topx, topy, 0xC1, 0x02, oamId);
       oamId = oam_spr(topx+8, topy, 0xC1, 0x02, oamId);
       oamId = oam_spr(topx+8, topy+8, 0xC1, 0x02, oamId);
       oamId = oam_spr(topx, topy+8, 0xC1, 0x02, oamId);
+      }
     }
     if(canGoUp)
     {
@@ -415,7 +446,7 @@ void enemyCollision(unsigned char enemyx, unsigned char enemyy)
   if (iframes <= 0 && iabs(player_y+8 - enemyy) < 16 &&  iabs(player_x+8 - enemyx) < 16)
   {
    health--;
-   sfx_play(SND_START,0);	// play starting sound
+   sfx_play(SND_BOOP,0);	// play starting sound
    iframes = 30;
    vbright = 8;
   }

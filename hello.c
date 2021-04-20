@@ -21,7 +21,7 @@ extern char MySongDump_music_data[];
 extern char demo_sounds[];
 
 // indices of sound effects (0..3)
-typedef enum { SND_START, SND_HIT, SND_COIN, SND_JUMP } SFXIndex;
+typedef enum { SND_START, SND_HIT, SND_PICKUP, SND_BOOP } SFXIndex;
 
 
 typedef struct {
@@ -192,6 +192,7 @@ void move_player(char pad_result)
     //If player presses space shoot a bullet in the direction they are walking
     if(pad_result & 0x01 && Bullets[PLAYERBULLET].ypos == YOFFSCREEN)
     {
+        sfx_play(SND_PICKUP, 0);	// play starting sound
       Bullets[PLAYERBULLET].ypos = player_y+6; // must be multiple of missile speed
       Bullets[PLAYERBULLET].xpos = player_x+4; // player X position
       //int for direction 0 = right, 1 = down, 2 = left, 3 = up
@@ -220,6 +221,7 @@ void move_player(char pad_result)
     //Bombs
      if(bombs > 0 && (pad_result >> 1) & 0x01)
      {
+       sfx_play(SND_HIT,0);	// play starting sound
        bombs--;
        reset_enemies();
        bombScreen();
@@ -227,10 +229,12 @@ void move_player(char pad_result)
     //Hit triggers
     if(!secretUnlocked && map == 9 && player_x > 112 && player_x < 128 && player_y > 104 && player_y < 117)
     {
+      sfx_play(SND_PICKUP,0);	// play starting sound
       secretUnlocked = true;
     }
     if(!haveLader && map == 13 && player_x > 112 && player_x < 128 && player_y > 104 && player_y < 117)
     {
+      sfx_play(SND_PICKUP,0);	// play starting sound
       haveLader = true;
     }
 }
@@ -252,6 +256,7 @@ void move_bullets() {
       {
          if (Enemies[j].xpos != xOFFSCREEN && iabs(Bullets[i].ypos - Enemies[j].ypos) < 16 &&  iabs(Bullets[i].xpos - Enemies[j].xpos < 16))
          {
+           sfx_play(SND_HIT,0);	// play starting sound
            // We killed an enemy
            numEnemies--;
            Enemies[j].xpos = xOFFSCREEN;
@@ -299,8 +304,7 @@ void moveEnemies()
 void runGame()
 {
   setup_sounds();		// init famitone library
-  sfx_play(SND_START,0);	// play starting sound
-  music_play(0);		// start the music
+  music_play(1);		// start the music
   title();
   fade_in();
   while(titleScreen)
@@ -309,6 +313,8 @@ void runGame()
     if((pad_result >> 3) & 0x01)
     {
       fade_out();
+        music_play(0);		// start the music
+      sfx_play(SND_START,0);	// play starting sound
       titleScreen = false;
     }
   }
@@ -365,8 +371,9 @@ void runGame()
     if(Bombs[0].xpos != xOFFSCREEN)
     {
       oam_id = oam_spr(Bombs[0].xpos, Bombs[0].ypos, 0xB2, 0x00, oam_id);
-      if (iabs(Bombs[0].ypos - player_y+8) < 16 &&  iabs(Bombs[0].xpos - player_x+8) < 16)
+      if (iabs(Bombs[0].ypos - player_y) < 16 &&  iabs(Bombs[0].xpos - player_x) < 16)
       {
+        sfx_play(SND_PICKUP,0);	// play starting sound
         //We picked up the bomb
         if(bombs != 9)
         	bombs ++;
@@ -395,11 +402,12 @@ void runGame()
       if(health == 0)
       {
         dead = true;
-        fade_out();
+        fade_out();  
         break;
       }
     }
   }
+      music_play(1);		// start the music
       //show title screen
       scroll(0,240);//title is aligned to the color attributes, so shift it a bit to the right
       ppu_off();
@@ -426,7 +434,11 @@ void runGame()
 
         scroll(0,iy>>4);
 
-        if(pad_trigger(0)&PAD_START) break;
+        if(pad_trigger(0)&PAD_START)
+        {
+          sfx_play(SND_START,0);	// play starting sound
+          break;
+        }
 
         iy+=dy;
 
