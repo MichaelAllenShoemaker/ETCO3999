@@ -300,7 +300,7 @@ void runGame()
 {
   setup_sounds();		// init famitone library
   sfx_play(SND_START,0);	// play starting sound
-  music_play(1);		// start the music
+  music_play(0);		// start the music
   title();
   fade_in();
   while(titleScreen)

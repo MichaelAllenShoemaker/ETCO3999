@@ -415,6 +415,7 @@ void enemyCollision(unsigned char enemyx, unsigned char enemyy)
   if (iframes <= 0 && iabs(player_y+8 - enemyy) < 16 &&  iabs(player_x+8 - enemyx) < 16)
   {
    health--;
+   sfx_play(SND_START,0);	// play starting sound
    iframes = 30;
    vbright = 8;
   }
